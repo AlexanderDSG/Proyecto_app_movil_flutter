@@ -8,7 +8,7 @@ class CreateUpdateView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create/Update Product'),
+        title: const Text('Create Product'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -42,7 +42,7 @@ class CreateUpdateView extends StatelessWidget {
                 onPressed: () {
                   // Acción del botón
                 },
-                child: const Text('Submit'),
+                child: const Text('Create'),
               ),
             ],
           ),
