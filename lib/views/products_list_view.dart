@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/card_item_product.dart';
 
 class ProductsListView extends StatelessWidget {
   const ProductsListView({super.key});
@@ -9,29 +10,36 @@ class ProductsListView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Products List'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                const Expanded(
-                  child: Text(
-                    'This is a product description. This paragraph provides details about the product, highlighting its features and benefits.',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-                const SizedBox(width: 10), // Espacio entre el texto y la imagen
-                Image.network(
-                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcTafhdDoZ2H7WRl7fiDbveq-cWi2W8T6O2g&s', // Reemplaza con la URL de tu imagen
-                  width: 100,
-                  height: 100,
-                ),
-              ],
-            ),
+      body: ListView(
+        children: const [
+          CardItemProduct(
+            name: 'Product 1',
+            price: '\$50',
+            quantity: '10',
+            description:
+                'This is a product description. This paragraph provides details about the product, highlighting its features and benefits.',
+            imageUrl:
+                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcTafhdDoZ2H7WRl7fiDbveq-cWi2W8T6O2g&s',
           ),
-        ),
+          CardItemProduct(
+            name: 'Product 2',
+            price: '\$30',
+            quantity: '5',
+            description:
+                'This is another product description. It provides details about the second product.',
+            imageUrl:
+                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcTafhdDoZ2H7WRl7fiDbveq-cWi2W8T6O2g&s',
+          ),
+          CardItemProduct(
+            name: 'Product 3',
+            price: '\$20',
+            quantity: '8',
+            description:
+                'This is the third product description. It describes the third product in detail.',
+            imageUrl:
+                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcTafhdDoZ2H7WRl7fiDbveq-cWi2W8T6O2g&s',
+          ),
+        ],
       ),
     );
   }
