@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
 class CreateInputText extends StatelessWidget {
-  final String? initialValue;
+  final TextEditingController controller;
   final String label;
   final String hintText;
   final String helperText;
 
-
   const CreateInputText({
     Key? key,
-    this.initialValue,
+    required this.controller,
     required this.label,
     required this.hintText,
     required this.helperText,
@@ -20,7 +19,7 @@ class CreateInputText extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
-        initialValue: initialValue,
+        controller: controller,
         decoration: InputDecoration(
           labelText: label,
           hintText: hintText,
@@ -34,4 +33,3 @@ class CreateInputText extends StatelessWidget {
     );
   }
 }
-

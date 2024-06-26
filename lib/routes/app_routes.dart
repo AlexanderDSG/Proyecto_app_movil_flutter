@@ -17,7 +17,7 @@ final routesConfig = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.createUpdate,
-      builder: (context, state) => const CreateUpdateView(),
+      builder: (context, state) => CreateUpdateView(),
     ),
     GoRoute(
       path: '${AppRoutes.editUpdate}/:productId',
