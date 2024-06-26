@@ -1,45 +1,43 @@
 import 'package:flutter/material.dart';
-import '../widgets/card_item_product.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:myapp/types/product.dart';
 
-class ProductsListView extends StatelessWidget {
+import '../providers/product_provider.dart';
+import '../widgets/card_item_product.dart';
+import '../widgets/drawer_widget.dart';
+
+class ProductsListView extends ConsumerWidget {
   const ProductsListView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final productProv = ref.watch(productsProvider);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Products List'),
+        title: const Text("List products View"),
       ),
-      body: ListView(
-        children: const [
-          CardItemProduct(
-            name: 'Product 1',
-            price: '\$50',
-            quantity: '10',
-            description:
-                'This is a product description. This paragraph provides details about the product, highlighting its features and benefits.',
-            imageUrl:
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcTafhdDoZ2H7WRl7fiDbveq-cWi2W8T6O2g&s',
-          ),
-          CardItemProduct(
-            name: 'Product 2',
-            price: '\$30',
-            quantity: '5',
-            description:
-                'This is another product description. It provides details about the second product.',
-            imageUrl:
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcTafhdDoZ2H7WRl7fiDbveq-cWi2W8T6O2g&s',
-          ),
-          CardItemProduct(
-            name: 'Product 3',
-            price: '\$20',
-            quantity: '8',
-            description:
-                'This is the third product description. It describes the third product in detail.',
-            imageUrl:
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcTafhdDoZ2H7WRl7fiDbveq-cWi2W8T6O2g&s',
-          ),
-        ],
+      drawer: const DrawerWidget(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: productProv.when(
+              data: (List<Product> lp) {
+                return lp.map((product) {
+                  return CardItemProduct(
+                    id: product.id,
+                    url: product.urlImage,
+                    name: product.name,
+                    price: product.price,
+                    stock: product.stock,
+                    description: product.description,
+                  );
+                }).toList();
+              },
+              error: (obj, err) => [Text(err.toString()), const Text('===='), Text(obj.toString())],
+              loading: () => [const CircularProgressIndicator()],
+            )
+          ,
+        ),
       ),
     );
   }

@@ -1,42 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ProductDetailView extends StatelessWidget {
-  const ProductDetailView({super.key});
+import '../providers/product_provider.dart';
+import '../widgets/drawer_widget.dart';
+import '../widgets/product_detail_widget.dart';
+
+class ProductDetailView extends ConsumerWidget {
+  final String? productId;
+  const ProductDetailView({super.key, this.productId});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Asegurarse con un print
+    final productByidRef = ref.watch(productByIdProvider(productId ?? ''));
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Product Detail'),
+        title: const Text("Product Detail View"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+      drawer: const DrawerWidget(),
+      body: productByidRef.when(
+        data: (item) => ProductDetailWidget(
+          id: item.id,
+          url: item.urlImage,
+          name: item.name,
+          price: item.price,
+          stock: item.stock,
+          description: item.description,
+        ),
+        error: (error, stackTrace) => Column(
           children: [
-            Expanded(
-              child: Center(
-                child: Image.network(
-                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcTafhdDoZ2H7WRl7fiDbveq-cWi2W8T6O2g&s', // Reemplaza con la URL de tu imagen
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-            const SizedBox(height: 20), // Espacio entre la imagen y la descripción
-            const Text(
-              'This is the product description. It provides details about the product, including features, specifications, and benefits.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 20), // Espacio entre la descripción y el botón
-            ElevatedButton(
-              onPressed: () {
-                // Acción del botón
-              },
-              child: const Text('Comprar'),
-            ),
+            Text(error.toString()),
+            Text(stackTrace.toString()),
           ],
         ),
+        loading: () => const Center(child: CircularProgressIndicator()),
       ),
     );
   }

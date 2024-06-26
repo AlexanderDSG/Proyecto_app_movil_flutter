@@ -3,12 +3,12 @@ import 'package:myapp/views/index.dart';
 
 class AppRoutes {
   static String home = "/";
-  static String createUpdate= "/create-update";
+  static String createUpdate = "/create-update";
+  static String editUpdate = "/edit-update";
   static String productDetail = "/product-detail";
-  static String productListView  = "/product-list-view";
+  static String productListView = "/product-list-view";
 }
 
-//importar librerias y clases de views
 final routesConfig = GoRouter(
   routes: [
     GoRoute(
@@ -20,12 +20,20 @@ final routesConfig = GoRouter(
       builder: (context, state) => const CreateUpdateView(),
     ),
     GoRoute(
-      path: AppRoutes.productDetail,
-      builder: (context, state) => const ProductDetailView(),
+      path: '${AppRoutes.editUpdate}/:productId',
+      builder: (context, state) => EditUpdateView(
+        productId: state.pathParameters['productId']!,
+      ),
     ),
     GoRoute(
       path: AppRoutes.productListView,
       builder: (context, state) => const ProductsListView(),
     ),
-  ]
+    GoRoute(
+      path: '${AppRoutes.productDetail}/:productId',
+      builder: (context, state) => ProductDetailView(
+        productId: state.pathParameters['productId']!,
+      ),
+    ),
+  ],
 );

@@ -12,19 +12,30 @@ class DrawerWidget extends StatelessWidget {
     return Container(
       width: size.width * 0.6,
       height: double.infinity,
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor
-      ),
+      decoration:
+          BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
       child: Column(
         children: [
           const SizedBox(height: 35),
           const Text("Menu"),
           //forma mas facile de personalizar
-          CustomTitleWidget(lead: Icons.home, label: "Home",routes: AppRoutes.home,),
-          CustomTitleWidget(lead: Icons.document_scanner_outlined, label: "List",routes: AppRoutes.productListView,),
-          CustomTitleWidget(lead: Icons.find_in_page, label: "Details",routes: AppRoutes.productDetail,),
-          CustomTitleWidget(lead: Icons.add_circle_outline, label: "Create",routes: AppRoutes.createUpdate,),
-
+          CustomTitleWidget(
+            lead: Icons.home,
+            label: "Home",
+            routes: AppRoutes.home,
+          ),
+          CustomTitleWidget(
+            lead: Icons.document_scanner_outlined,
+            label: "List",
+            routes: AppRoutes.productListView,
+          ),
+          
+          CustomTitleWidget(
+            lead: Icons.add_circle_outline,
+            label: "Create",
+            routes: AppRoutes.createUpdate,
+          ),
+          
         ],
       ),
     );
