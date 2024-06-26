@@ -8,3 +8,7 @@
 ### Semana 7 
 - mejora de la app
 - instalacion de dio
+
+#### Semana 10
+-Agregar metodo post 
+-enviar a la api
