@@ -11,7 +11,6 @@ class ProductDetailView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Asegurarse con un print
     final productByidRef = ref.watch(productByIdProvider(productId ?? ''));
     return Scaffold(
       appBar: AppBar(
@@ -21,11 +20,11 @@ class ProductDetailView extends ConsumerWidget {
       body: productByidRef.when(
         data: (item) => ProductDetailWidget(
           id: item.id,
-          url: item.urlImage,
           name: item.name,
           price: item.price,
           stock: item.stock,
-          description: item.description,
+          description: item.description, 
+          url: item.urlImage,
         ),
         error: (error, stackTrace) => Column(
           children: [

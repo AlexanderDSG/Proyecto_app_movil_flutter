@@ -48,7 +48,7 @@ class CreateUpdateView extends StatelessWidget {
       }
     } catch (e) {
       // Maneja cualquier error de la solicitud
-      if (e is DioError) {
+      if (e is DioException) {
         print("Error de Dio: ${e.response?.statusCode} - ${e.response?.data}");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error al crear el producto: ${e.response?.data}')),
@@ -106,7 +106,7 @@ class CreateUpdateView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.blue),
+                  backgroundColor: WidgetStateProperty.all(Colors.blue),
                 ),
                 onPressed: () {
                   createProduct(context);

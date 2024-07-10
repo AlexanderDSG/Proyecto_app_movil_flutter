@@ -7,12 +7,12 @@ class CreateInputText extends StatelessWidget {
   final String helperText;
 
   const CreateInputText({
-    Key? key,
+    super.key,
     required this.controller,
     required this.label,
     required this.hintText,
     required this.helperText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
