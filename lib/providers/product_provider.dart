@@ -49,7 +49,7 @@ class ProductUpdateNotifier extends StateNotifier<bool> {
         "https://pucei.edu.ec:9101/api/v2/products/${product.id}",
         data: product.toJson(),
       );
-
+      
       if (response.statusCode == 200) {
         state = true;
         return true;

@@ -111,7 +111,7 @@ class ProductDetailWidget extends StatelessWidget {
                 ),
                 ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.red),
+                    backgroundColor: WidgetStateProperty.all(Colors.red),
                   ),
                   onPressed: () async {
                     final success = await deleteProduct.deleteProduct(id);
