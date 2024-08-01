@@ -12,3 +12,8 @@
 #### Semana 10
 -Agregar metodo post 
 -enviar a la api
+
+#### semana 11,12,13,14
+- Actualizacion del provider
+- Actualizacion del estilos
+- Verificar datos que se guarden y se recargen
