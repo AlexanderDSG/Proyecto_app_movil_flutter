@@ -1,129 +1,138 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
-import '../routes/app_routes.dart';
-import '../widgets/create_input_text.dart';
-import '../widgets/drawer_widget.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:myapp/providers/product_provider.dart';
+import 'package:myapp/routes/app_routes.dart';
+import 'package:myapp/types/product.dart';
 
-class CreateUpdateView extends StatelessWidget {
-  CreateUpdateView({super.key});
+import '../widgets/custom_input_text.dart';
+import '../widgets/drawer_widget.dart';
 
-  // Controladores para los campos de entrada
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController priceController = TextEditingController();
-  final TextEditingController stockController = TextEditingController();
-  final TextEditingController urlImageController = TextEditingController();
-
-  // Función para crear un nuevo producto
-  Future<void> createProduct(BuildContext context) async {
-    final dio = Dio();
-
-    final product = {
-      "name": nameController.text,
-      "description": descriptionController.text,
-      "price": double.tryParse(priceController.text) ?? 0.0,
-      "stock": double.tryParse(stockController.text) ?? 0.0,
-      "urlImage": urlImageController.text,
-    };
-
-    // Imprimir datos del producto para depuración
-    print("Datos del producto a enviar: $product");
-
-    try {
-      final response = await dio.post(
-        "https://pucei.edu.ec:9101/api/v2/products",
-        data: product,
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        // Redirigir a la pantalla de inicio después de la creación exitosa
-        context.go(AppRoutes.home);
-      } else {
-        // Maneja el error de acuerdo a tu lógica
-        print("Error al crear el producto: ${response.statusMessage}");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al crear el producto: ${response.statusMessage}')),
-        );
-      }
-    } catch (e) {
-      // Maneja cualquier error de la solicitud
-      if (e is DioException) {
-        print("Error de Dio: ${e.response?.statusCode} - ${e.response?.data}");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al crear el producto: ${e.response?.data}')),
-        );
-      } else {
-        print("Excepción al crear el producto: $e");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Excepción al crear el producto: $e')),
-        );
-      }
-    }
-  }
+class CreateUpdateView extends ConsumerWidget {
+  final String? productId;
+  const CreateUpdateView({super.key, this.productId});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final TextEditingController nameCtrl = TextEditingController();
+    final TextEditingController priceCtrl = TextEditingController();
+    final TextEditingController stockCtrl = TextEditingController();
+    final TextEditingController urlImageCtrl = TextEditingController();
+    final TextEditingController descriptionCtrl = TextEditingController();
+
+    final productIdProv = productId == null
+        ? ref.watch(productEmptyProvider)
+        : ref.watch(productByIdProvider(productId!));
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Product'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_left),
+          onPressed: () {
+            context.go(AppRoutes.productsListView);
+          },
+        ),
+        title: Text(
+          productId == null ? 'Create Product' : 'Update Product',
+          style: const TextStyle(fontSize: 25),
+        ),
       ),
       drawer: const DrawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            CreateInputText(
-              controller: nameController,
-              label: 'Name',
-              hintText: 'Enter the name of the product',
-              helperText: 'The name of the product',
-            ),
-            CreateInputText(
-              controller: descriptionController,
-              label: 'Description',
-              hintText: 'Enter the description of the product',
-              helperText: 'The description of the product',
-            ),
-            CreateInputText(
-              controller: priceController,
-              label: 'Price',
-              hintText: 'Enter the price of the product',
-              helperText: 'The price of the product',
-            ),
-            CreateInputText(
-              controller: stockController,
-              label: 'Stock',
-              hintText: 'Enter the stock of the product',
-              helperText: 'The stock of the product',
-            ),
-            CreateInputText(
-              controller: urlImageController,
-              label: 'Image URL',
-              hintText: 'Enter the URL of the product image',
-              helperText: 'The URL of the product image',
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(Colors.blue),
-                ),
-                onPressed: () {
-                  createProduct(context);
-                },
-                child: const SizedBox(
-                  width: double.infinity,
-                  child: Center(
-                    child: Text(
-                      "Crear",
-                      style: TextStyle(
-                        color: Colors.white,
+            Form(
+              child: Column(
+                children: [
+                  productIdProv.when(
+                      data: (product) {
+                        if (productId != null) {
+                          // Update inputs controllers
+                          nameCtrl.text = product.name;
+                          priceCtrl.text = product.price.toString();
+                          stockCtrl.text = product.stock.toString();
+                          urlImageCtrl.text = product.urlImage;
+                          descriptionCtrl.text = product.description;
+                        }
+                        return Column(
+                          children: [
+                            CustomInputText(
+                              label: 'Name product',
+                              hintText: product.name,
+                              controller: nameCtrl,
+                            ),
+                            CustomInputText(
+                              label: 'Price',
+                              hintText: product.price.toString(),
+                              controller: priceCtrl,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                            ),
+                            CustomInputText(
+                              label: 'Stock',
+                              hintText: product.stock.toString(),
+                              controller: stockCtrl,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                            ),
+                            CustomInputText(
+                              label: 'URL Image',
+                              hintText: product.urlImage,
+                              controller: urlImageCtrl,
+                            ),
+                            CustomInputText(
+                              label: 'Description',
+                              hintText: product.description,
+                              controller: descriptionCtrl,
+                            ),
+                          ],
+                        );
+                      },
+                      error: (err, trc) {
+                        return Column(
+                          children: [Text('$err'), Text('$trc')],
+                        );
+                      },
+                      loading: () => const CircularProgressIndicator()),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              WidgetStateProperty.all(Colors.blue)),
+                      onPressed: () async {
+                        // print();
+                        final Product productSubmit = Product(
+                            id: productId ?? '',
+                            name: nameCtrl.text,
+                            price: double.parse(priceCtrl.text),
+                            stock: double.parse(stockCtrl.text),
+                            urlImage: urlImageCtrl.text,
+                            description: descriptionCtrl.text,
+                            v: 0);
+
+                        if (productId == null) {
+                          // Crear
+                          ref.read(createProductProvider(productSubmit));
+                        } else {
+                          // Actualizar
+                          ref.read(updateProductProvider(productSubmit));
+                        }
+
+                        context.push(AppRoutes.productsListView);
+                        ref.invalidate(productsProvider);
+                      },
+                      child: Text(
+                        productId == null ? 'Create' : 'Update',
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ),
+            )
           ],
         ),
       ),

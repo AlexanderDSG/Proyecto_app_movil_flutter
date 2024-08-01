@@ -8,44 +8,42 @@ List<Product> productFromJson(String str) => List<Product>.from(json.decode(str)
 
 String productToJson(List<Product> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-// Modelo de Producto en Flutter
 class Product {
-  String id;
-  String name;
-  double price;
-  double stock;
-  String urlImage;
-  String description;
-  int v;
+    String id;
+    String name;
+    double price;
+    double stock;
+    String urlImage;
+    String description;
+    int v;
 
-  Product({
-    required this.id,
-    required this.name,
-    required this.price,
-    required this.stock,
-    required this.urlImage,
-    required this.description,
-    required this.v,
-  });
+    Product({
+        required this.id,
+        required this.name,
+        required this.price,
+        required this.stock,
+        required this.urlImage,
+        required this.description,
+        required this.v,
+    });
 
-  factory Product.fromJson(Map<String, dynamic> json) => Product(
+    factory Product.fromJson(Map<String, dynamic> json) => Product(
         id: json["_id"],
         name: json["name"],
-        price: json["price"]?.toDouble() ?? 0,
-        stock: json["stock"]?.toDouble() ?? 0,
-        urlImage: json["urlImage"] ?? "",
+        price: json["price"]?.toDouble(),
+        stock: json["stock"]?.toDouble(),
+        urlImage: json["urlImage"],
         description: json["description"],
         v: json["__v"],
-      );
+    );
 
-  Map<String, dynamic> toJson() => {
+    Map<String, dynamic> toJson() => {
+        "_id": id,
         "name": name,
         "price": price,
         "stock": stock,
         "urlImage": urlImage,
         "description": description,
-      };
+        "__v": v,
+    };
 }
-
-
-
