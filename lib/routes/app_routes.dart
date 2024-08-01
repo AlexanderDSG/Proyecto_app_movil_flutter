@@ -1,15 +1,19 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:myapp/views/index.dart';
 
 class AppRoutes {
   static String home = "/";
   static String createUpdate = "/create-update";
-  static String editUpdate = "/edit-update";
   static String productDetail = "/product-detail";
-  static String productListView = "/product-list-view";
+  static String productsListView = "/product-list-view";
 }
 
 final routesConfig = GoRouter(
+  errorBuilder: (context, state) => const Center(
+    child: Text("404 not found page"),
+  ),
   routes: [
     GoRoute(
       path: AppRoutes.home,
@@ -17,22 +21,17 @@ final routesConfig = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.createUpdate,
-      builder: (context, state) => CreateUpdateView(),
+      builder: (context, state) => CreateUpdateView(productId: state.uri.queryParameters["productId"]),
     ),
     GoRoute(
-      path: '${AppRoutes.editUpdate}/:productId',
-      builder: (context, state) => EditUpdateView(
-        productId: state.pathParameters['productId']!,
-      ),
-    ),
-    GoRoute(
-      path: AppRoutes.productListView,
+      path: AppRoutes.productsListView,
       builder: (context, state) => const ProductsListView(),
     ),
     GoRoute(
+      // path: AppRoutes.productDetail + '/:productId',
       path: '${AppRoutes.productDetail}/:productId',
       builder: (context, state) => ProductDetailView(
-        productId: state.pathParameters['productId']!,
+        productId: state.pathParameters['productId'],
       ),
     ),
   ],
