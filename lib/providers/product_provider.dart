@@ -2,27 +2,35 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myapp/types/product.dart';
 
+// products = lista de todos los productos
+
 final dioProvider = Provider<Dio>((ref) => Dio(BaseOptions(
-  validateStatus: (s) => true,
-  connectTimeout: const Duration(seconds: 5),
-  receiveTimeout: const Duration(seconds: 3),
-)));
+      validateStatus: (s) => true,
+      connectTimeout: const Duration(seconds: 5),
+      receiveTimeout: const Duration(seconds: 3),
+    )));
+
 
 final productsProvider = FutureProvider<List<Product>>((ref) async {
   final dio = ref.watch(dioProvider);
+
   final response = await dio.get("https://pucei.edu.ec:9101/api/v2/products");
 
   if (response.statusCode != 200) return [];
-  
-  final products = (response.data as List<dynamic>).map((item) {
+
+  final products = (response.data as List<dynamic>).map( (item) {
     return Product.fromJson(item);
-  }).toList();
+  } ).toList();
 
   return products;
+  // return response.data!.map((item) => item).toList();
 });
 
-final productByIdProvider = FutureProvider.family<Product, String>((ref, id) async {
+
+final productByIdProvider = FutureProvider.family<Product, String?>((ref, id) async {
+  
   final dio = ref.watch(dioProvider);
+
   final response = await dio.get("https://pucei.edu.ec:9101/api/v2/products/$id");
 
   if (response.statusCode != 200) return Product(id: "", name: "err", price: 0, stock: 0, urlImage: "", description: "err", v: 0);
@@ -32,71 +40,65 @@ final productByIdProvider = FutureProvider.family<Product, String>((ref, id) asy
   return product;
 });
 
-//actualizar
-final productUpdateProvider = StateNotifierProvider<ProductUpdateNotifier, bool>((ref) {
-  final dio = ref.watch(dioProvider);
-  return ProductUpdateNotifier(dio);
+// empty product to create
+final productEmptyProvider = FutureProvider(  (ref) {
+  return Product(id: '', name: 'err', price: 0, stock: 0, urlImage: '', description: 'description', v: 0);
 });
 
-class ProductUpdateNotifier extends StateNotifier<bool> {
-  final Dio _dio;
 
-  ProductUpdateNotifier(this._dio) : super(false);
-
-  Future<bool> updateProduct(Product product) async {
-    try {
-      final response = await _dio.patch(
-        "https://pucei.edu.ec:9101/api/v2/products/${product.id}",
-        data: product.toJson(),
-      );
-      
-      if (response.statusCode == 200) {
-        state = true;
-        return true;
-      } else {
-        print('Error: ${response.statusCode} - ${response.data}');
-        state = false;
-        return false;
-      }
-    } catch (e) {
-      print('Exception: $e');
-      state = false;
-      return false;
-    }
-  }
-}
-
-//eliminar
-final productDeleteProvider = StateNotifierProvider<ProductDeleteNotifier, bool>((ref) {
+// Create product
+final createProductProvider = FutureProvider.family<Product, Product>(  (ref, product) async {
   final dio = ref.watch(dioProvider);
-  return ProductDeleteNotifier(dio);
+
+  final response = await dio.post<Product>('https://pucei.edu.ec:9101/api/v2/products', data: {
+    "name": product.name,
+    "price": product.price,
+    "stock": product.stock,
+    "urlImage": product.urlImage,
+    "description": product.description
+  });
+
+  if( response.statusCode != 201 ){
+    return Product(id: '', name: 'err', price: 0, stock: 0, urlImage: '', description: 'description', v: 0);
+  }
+
+  return response.data!;
+  
 });
 
-class ProductDeleteNotifier extends StateNotifier<bool> {
-  final Dio _dio;
 
-  ProductDeleteNotifier(this._dio) : super(false);
+// Update product
+final updateProductProvider = FutureProvider.family<Product, Product>(  (ref, product) async {
+  final dio = ref.watch(dioProvider);
 
-  Future<bool> deleteProduct(String productId) async {
-    try {
-      final response = await _dio.delete(
-        "https://pucei.edu.ec:9101/api/v2/products/$productId",
-      );
+  final response = await dio.patch<Product>('https://pucei.edu.ec:9101/api/v2/products/${product.id}', data: {
+    "name": product.name,
+    "price": product.price,
+    "stock": product.stock,
+    "urlImage": product.urlImage,
+    "description": product.description
+  });
 
-      if (response.statusCode == 200) {
-        state = true;
-        return true;
-      } else {
-        print('Error: ${response.statusCode} - ${response.data}');
-        state = false;
-        return false;
-      }
-    } catch (e) {
-      print('Exception: $e');
-      state = false;
-      return false;
-    }
+  if( response.statusCode != 200 ){
+    return Product(id: '', name: 'err', price: 0, stock: 0, urlImage: '', description: 'description', v: 0);
   }
-}
+
+  return response.data!;
+  
+});
+// Delete product
+final deleteProductProvider = FutureProvider.family<Product, String>(  (ref, id) async {
+  final dio = ref.watch(dioProvider);
+
+  final response = await dio.delete<Product>('https://pucei.edu.ec:9101/api/v2/products/$id');
+
+  if( response.statusCode != 200 ){
+    return Product(id: '', name: 'err', price: 0, stock: 0, urlImage: '', description: 'description', v: 0);
+  }
+
+  return response.data!;
+  
+});
+
 
 
