@@ -17,7 +17,7 @@ final routesConfig = GoRouter(
   routes: [
     GoRoute(
       path: AppRoutes.home,
-      builder: (context, state) => const HomeView(),
+      builder: (context, state) => HomeView(),
     ),
     GoRoute(
       path: AppRoutes.createUpdate,
